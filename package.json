@@ -1,0 +1,20 @@
+{
+  "name": "react-apollo-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/esteban-master/react-apollo-server.git",
+  "author": "Esteban Beltran <estebanenriquebeltran@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/.",
+    "dev": "nodemon src/."
+  },
+  "dependencies": {
+    "apollo-server": "^2.16.1",
+    "dotenv": "^8.2.0",
+    "mongoose": "^5.9.28"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
