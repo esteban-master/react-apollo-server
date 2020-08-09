@@ -1,6 +1,5 @@
 const Usuario = require("../models/Usuario");
 const jsonWebToken = require("jsonwebtoken");
-
 require("dotenv").config({ path: "variables.env" });
 
 function crearToken(usuario, secrect, expiresIn) {
