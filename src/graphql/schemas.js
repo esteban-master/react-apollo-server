@@ -1,8 +1,14 @@
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
-  type Query {
-    obtenerUsuario(token: String!): Usuario
+  type Cliente {
+    id: ID
+    nombre: String
+    apellido: String
+    email: String
+    empresa: String
+    telefono: String
+    vendedor: ID
   }
 
   type Usuario {
@@ -14,6 +20,18 @@ const typeDefs = gql`
     creado: String
   }
 
+  type Producto {
+    id: ID!
+    nombre: String
+    existencia: Int
+    precio: Float
+    creado: String
+  }
+
+  type Token {
+    token: String
+  }
+
   input UsuarioInput {
     nombre: String!
     apellido: String!
@@ -21,18 +39,53 @@ const typeDefs = gql`
     password: String!
   }
 
-  type Token {
-    token: String
-  }
-
   input AutenticarInput {
     email: String!
     password: String!
   }
 
+  input ProductoInput {
+    nombre: String!
+    existencia: Int!
+    precio: Float!
+  }
+
+  input ClienteInput {
+    nombre: String!
+    apellido: String!
+    email: String!
+    empresa: String!
+    telefono: String
+  }
+
+  type Query {
+    # Usuarios
+    obtenerUsuario(token: String!): Usuario
+
+    #Productos
+    obtenerProductos: [Producto]
+    obtenerProducto(id: ID!): Producto
+
+    # Clientes
+    obtenerClientes: [Cliente]
+    obtenerClientesVendedor: [Cliente]
+    obtenerCliente(id: ID!): Cliente
+  }
+
   type Mutation {
+    # Usuarios
     nuevoUsuario(usuario: UsuarioInput): Usuario
     autenticarUsuario(input: AutenticarInput): Token
+
+    # Productos
+    nuevoProducto(input: ProductoInput): Producto
+    updateProducto(id: ID!, input: ProductoInput): Producto
+    deleteProducto(id: ID!): String
+
+    # Clientes
+    nuevoCliente(input: ClienteInput): Cliente
+    updateCliente(id: ID!, input: ClienteInput): Cliente
+    deleteCliente(id: ID!): String
   }
 `;
 
