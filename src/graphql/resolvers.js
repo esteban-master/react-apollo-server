@@ -2,6 +2,7 @@ const Usuario = require("../models/Usuario");
 const Producto = require("../models/Producto");
 const Cliente = require("../models/Cliente");
 const jsonWebToken = require("jsonwebtoken");
+const Pedido = require("../models/Pedido");
 require("dotenv").config({ path: "variables.env" });
 
 const resolvers = {
@@ -156,6 +157,30 @@ const resolvers = {
       } catch (error) {
         throw new Error(error);
       }
+    },
+    nuevoPedido: async (_, { input }, { usuario }) => {
+      const { cliente, pedido } = input;
+      const clienteFind = await Cliente.findById(cliente);
+      if (!clienteFind) throw new Error("El cliente no existe");
+      if (clienteFind.vendedor.toString() !== usuario.id)
+        throw new Error("No tienes las credenciales");
+
+      for await (const articulo of pedido) {
+        const { id, cantidad } = articulo;
+        const producto = await Producto.findById(id);
+
+        if (cantidad > producto.existencia) {
+          throw new Error(
+            `El articulo ${producto.nombre} excede la cantidad disponible`
+          );
+        } else {
+          producto.existencia = producto.existencia - cantidad;
+          await producto.save();
+        }
+      }
+
+      input.vendedor = usuario.id;
+      return await new Pedido(input).save();
     },
   },
 };
