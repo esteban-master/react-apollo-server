@@ -53,8 +53,13 @@ const typeDefs = gql`
     vendedor: [Usuario]
   }
 
-  type Token {
+  type UsuarioAutenticado {
     token: String
+    usuario: Usuario
+  }
+
+  type TokenValidation {
+    success: Boolean
   }
 
   input UsuarioInput {
@@ -118,12 +123,15 @@ const typeDefs = gql`
     mejoresClientes: [TopCliente]
     mejoresVendedores: [TopVendedor]
     buscarProducto(texto: String!): [Producto]
+
+    # Token
+    validateToken(token: String!): TokenValidation
   }
 
   type Mutation {
     # Usuarios
     nuevoUsuario(usuario: UsuarioInput): Usuario
-    autenticarUsuario(input: AutenticarInput): Token
+    autenticarUsuario(input: AutenticarInput): UsuarioAutenticado
 
     # Productos
     nuevoProducto(input: ProductoInput): Producto

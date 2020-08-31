@@ -7,12 +7,30 @@ require("dotenv").config({ path: "variables.env" });
 
 const resolvers = {
   Query: {
-    obtenerUsuario: async (_, { token }) => {
-      const usuario = jsonWebToken.verify(
+    validateToken: (_, { token }) => {
+      try {
+        const userJWT = jsonWebToken.verify(
+          token,
+          process.env.SECRECT_JSONWEBTOKEN
+        );
+        if (userJWT) {
+          return {
+            success: true,
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+        };
+      }
+    },
+    obtenerUsuario: (_, { token }, { usuario }) => {
+      const userJWT = jsonWebToken.verify(
         token,
         process.env.SECRECT_JSONWEBTOKEN
       );
-      return usuario;
+      console.log(userJWT, "USUARIO::::", usuario);
+      return userJWT;
     },
     obtenerProductos: async () => {
       try {
@@ -109,7 +127,9 @@ const resolvers = {
       return vendedores;
     },
     buscarProducto: async (_, { texto }) => {
-      return await Producto.find({ $text: { $search: texto } });
+      return await Producto.find({
+        $text: { $search: texto },
+      });
     },
   },
   Mutation: {
@@ -136,7 +156,8 @@ const resolvers = {
       }
 
       return {
-        token: findUsuario.crearToken(process.env.SECRECT_JSONWEBTOKEN, "24h"),
+        token: findUsuario.crearToken(process.env.SECRECT_JSONWEBTOKEN, "1h"),
+        usuario: findUsuario,
       };
     },
     nuevoProducto: async (_, { input }) => {

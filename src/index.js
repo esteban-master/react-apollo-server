@@ -11,19 +11,20 @@ const server = new ApolloServer({
   resolvers,
   typeDefs,
   context: ({ req }) => {
-    // console.log(req.headers["authorization"]);
     const token = req.headers["authorization"] || "";
+    console.log("req:", req);
     if (token) {
       try {
         const usuarioVerificado = jsonWebToken.verify(
-          token,
+          token.replace("Bearer", "").trim(),
           process.env.SECRECT_JSONWEBTOKEN
         );
+        // console.log(usuarioVerificado);
         return {
           usuario: usuarioVerificado,
         };
       } catch (error) {
-        throw new Error(error);
+        throw new Error(error.message);
       }
     }
   },
